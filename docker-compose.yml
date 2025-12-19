@@ -1,9 +1,18 @@
 services:
-    wizarr:
-        build: .
-        ports:
-            - 5690:5690
-        volumes:
-            - ./test-data:/data/database
-        environment:
-            - TZ=Europe/London
+  wizarr:
+    container_name: wizarr
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5690:5690
+    volumes:
+      - /HomeBase/Docker/AppData/Config/Wizarr/:/data
+      # Optional: Mount your local app for live development
+      # - ./app:/app/app
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - DISABLE_BUILTIN_AUTH=false
+      - TZ=America/Los_Angeles
+    restart: unless-stopped
