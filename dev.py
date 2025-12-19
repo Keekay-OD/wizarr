@@ -4,24 +4,70 @@ import sys
 from pathlib import Path
 
 
+import platform
+
 def check_node_installation():
     print("Checking Node.js and npm installation...")
+    
+    # Determine if we're on Windows
+    is_windows = platform.system() == "Windows"
+    
     try:
-        node_version = subprocess.run(
-            ["node", "--version"], capture_output=True, text=True, check=True
-        ).stdout.strip()
+        # Check Node.js
+        node_args = ["node", "--version"]
+        if is_windows:
+            node_args = ["node", "--version"]  # Keep as list
+            
+        node_result = subprocess.run(
+            node_args,
+            capture_output=True, 
+            text=True,
+            shell=is_windows  # Use shell=True only on Windows
+        )
+        
+        if node_result.returncode != 0:
+            raise subprocess.CalledProcessError(node_result.returncode, node_args)
+            
+        node_version = node_result.stdout.strip()
         print(f"✓ Node.js {node_version} is installed")
 
-        npm_version = subprocess.run(
-            ["npm", "--version"], capture_output=True, text=True, check=True
-        ).stdout.strip()
+        # Check npm
+        npm_args = ["npm", "--version"]
+        if is_windows:
+            npm_args = ["npm.cmd", "--version"]  # Try npm.cmd on Windows
+        
+        npm_result = subprocess.run(
+            npm_args,
+            capture_output=True, 
+            text=True,
+            shell=is_windows  # Use shell=True only on Windows
+        )
+        
+        # If npm.cmd failed, try npm without .cmd
+        if npm_result.returncode != 0 and is_windows:
+            npm_result = subprocess.run(
+                ["npm", "--version"],
+                capture_output=True, 
+                text=True,
+                shell=True
+            )
+        
+        if npm_result.returncode != 0:
+            raise subprocess.CalledProcessError(npm_result.returncode, npm_args)
+            
+        npm_version = npm_result.stdout.strip()
         print(f"✓ npm {npm_version} is installed")
-    except subprocess.CalledProcessError:
-        print("❌ Node.js and/or npm is not installed!")
-        print("Please install Node.js and npm before running this script.")
-        print("You can download them from: https://nodejs.org/")
+        
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Node.js/npm check failed: {e}")
+        print("\nTroubleshooting steps:")
+        print("1. Make sure Node.js is installed: https://nodejs.org/")
+        print("2. Add Node.js to PATH during installation")
+        print("3. On Windows, try these commands in CMD/PowerShell:")
+        print("   - where node")
+        print("   - where npm")
+        print("4. Restart your terminal after installation")
         sys.exit(1)
-
 
 def check_uv_installation():
     print("Checking uv installation...")
