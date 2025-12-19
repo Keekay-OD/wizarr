@@ -1,30 +1,19 @@
 import argparse
 import subprocess
 import sys
-import os
 from pathlib import Path
 
 
 def check_node_installation():
     print("Checking Node.js and npm installation...")
     try:
-        # Check Node.js
         node_version = subprocess.run(
-            ["node", "--version"], 
-            capture_output=True, 
-            text=True, 
-            check=True,
-            shell=True  # Add this for Windows
+            ["node", "--version"], capture_output=True, text=True, check=True
         ).stdout.strip()
         print(f"✓ Node.js {node_version} is installed")
 
-        # Check npm
         npm_version = subprocess.run(
-            ["npm", "--version"], 
-            capture_output=True, 
-            text=True, 
-            check=True,
-            shell=True  # Add this for Windows
+            ["npm", "--version"], capture_output=True, text=True, check=True
         ).stdout.strip()
         print(f"✓ npm {npm_version} is installed")
     except subprocess.CalledProcessError:
@@ -38,11 +27,7 @@ def check_uv_installation():
     print("Checking uv installation...")
     try:
         uv_version = subprocess.run(
-            ["uv", "--version"], 
-            capture_output=True, 
-            text=True, 
-            check=True,
-            shell=True  # Add this for Windows
+            ["uv", "--version"], capture_output=True, text=True, check=True
         ).stdout.strip()
         print(f"✓ uv {uv_version} is installed")
     except subprocess.CalledProcessError:
@@ -57,17 +42,7 @@ def check_uv_installation():
 def run_command(command, cwd=None, env=None):
     print(f"Running: {' '.join(command)}")
     try:
-        # For npm commands on Windows, use shell=True
-        if command[0] in ['npm', 'node', 'uv']:
-            process = subprocess.Popen(
-                command, 
-                cwd=cwd, 
-                env=env,
-                shell=True  # Add shell=True for npm commands
-            )
-        else:
-            process = subprocess.Popen(command, cwd=cwd, env=env)
-            
+        process = subprocess.Popen(command, cwd=cwd, env=env)
         process.wait()
         if process.returncode != 0:
             print(f"Error running command: {' '.join(command)}")
@@ -147,10 +122,7 @@ Plus features include:
     # Start the Tailwind watcher in the background
     print("Starting Tailwind watcher...")
     tailwind_process = subprocess.Popen(
-        ["npm", "run", "watch:css"], 
-        cwd=static_dir, 
-        env=npm_env,
-        shell=True  # Add shell=True here too
+        ["npm", "run", "watch:css"], cwd=static_dir, env=npm_env
     )
 
     try:

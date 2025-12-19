@@ -431,3 +431,4 @@ CLAUDE.md.old
 # Internal documentation (AI-generated, not for version control)
 docs-internal/
 app/static/package-lock.json
+app/static/package-lock.json
